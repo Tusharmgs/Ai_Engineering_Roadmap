@@ -1,0 +1,1241 @@
+<!-- Save as roadmap.html and open in browser -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>AI Engineering Roadmap with Theme Preview Grid</title>
+<style>
+  /* Base and theme CSS variables */
+  :root {
+    --bg: #f8f9fa; /* Light background - will be overridden by selected theme */
+    --card: #ffffff; /* Card background - will be overridden by selected theme */
+    --text: #212529; /* Default text color - will be overridden by selected theme */
+    --accent: #007bff; /* Primary accent color - will be overridden by selected theme */
+    --accent-2: #6c757d; /* Secondary accent color - will be overridden by selected theme */
+    --link: #17a2b8; /* Link color - will be overridden by selected theme */
+    --muted: #6c757d; /* Muted text color - will be overridden by selected theme */
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08); /* Box shadow - will be overridden by selected theme */
+    --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --border-color: rgba(0, 0, 0, 0.1); /* Border color - will be overridden by selected theme */
+
+    /* Default RGB values for transparency - will be overridden by selected theme */
+    --accent-rgb: 0, 123, 255;
+    --accent-2-rgb: 108, 117, 125;
+    --link-rgb: 23, 162, 184;
+  }
+
+  /* No dark mode specific variables as dark mode toggle is removed */
+
+  body {
+    margin: 0; 
+    font-family: var(--font-family);
+    background-color: var(--bg);
+    color: var(--text); /* This will now always be dynamically set by JS based on selected theme */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .wrap {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 20px 40px;
+  }
+  header {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 1.75rem);
+    flex: 1 1 100%;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  header .plan-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  select, input[type=number], button {
+    font-family: inherit;
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  select:hover, input[type=number]:hover, button:hover {
+    border-color: var(--accent);
+  }
+  input[type=number] {
+    width: 120px;
+  }
+  button {
+    border: none;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: white;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+  }
+  button.secondary {
+    background: var(--link);
+    color: white; /* Changed for better contrast */
+  }
+  button.secondary:hover {
+    background: var(--accent); /* Consistent hover */
+  }
+
+  /* Dark Mode Toggle Button styles removed */
+
+  /* Theme preview grid */
+  #themeGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive grid */
+    gap: 12px;
+    margin: 20px 0 30px;
+    padding: 15px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  .theme-preview {
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    border: 3px solid transparent;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    overflow: hidden; /* Ensures swatch corners are rounded */
+  }
+  .theme-preview:hover {
+    transform: translateY(-3px);
+  }
+  .theme-preview.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent), var(--shadow); /* Highlight selected */
+  }
+  .theme-swatch {
+    height: 60px; /* Smaller swatch */
+    border-radius: 7px 7px 0 0; /* Match parent border-radius */
+    position: relative;
+  }
+  .theme-name {
+    padding: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    background: var(--card);
+    border-radius: 0 0 7px 7px;
+    color: var(--text);
+    border-top: 1px solid var(--border-color);
+  }
+  
+  /* Roadmap content */
+  nav {
+    margin-bottom: 1rem;
+    background: var(--card);
+    padding: 0.5rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 10px;
+    border: 1px solid #80808052;
+    gap: 15px;
+    justify-content: center;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  nav a:hover {
+    background-color: rgba(var(--accent-rgb), 0.1); /* Use RGB for transparency */
+    text-decoration: none;
+  }
+  section.phase {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+  }
+  section.phase h2 {
+    margin: 0 0 0.875rem 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 3vw, 1.375rem);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  section.phase .caret {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+  section.phase.collapsed .caret {
+    transform: rotate(-90deg);
+  }
+  section.phase.collapsed .content {
+    display: none;
+  }
+  .goal {
+    background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.1), rgba(var(--accent-2-rgb), 0.05));
+    border-left: 5px solid var(--accent);
+    padding: 12px 18px;
+    font-weight: 700;
+    color: var(--accent-2);
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-weight: 700;
+    color: var(--accent-2);
+    margin-bottom: 10px;
+    font-size: 17px;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 5px;
+  }
+  ul {
+    padding-left: 20px;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+  li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  a.resource {
+    color: var(--link);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  a.resource:hover {
+    text-decoration: underline;
+    color: var(--accent);
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .keyword {
+    font-weight: 700;
+    color: #007bff; /* Bootstrap primary blue */
+  }
+  .checkpoint {
+    border-left: 5px solid var(--link);
+    background: linear-gradient(90deg, rgba(var(--link-rgb), 0.07), rgba(var(--link-rgb), 0.04));
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    margin-top: 20px;
+    color: var(--link);
+  }
+  /* Progress bar */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    background: var(--card);
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+  }
+  .progress-bar {
+    flex: 1;
+    height: 18px;
+    background: var(--border-color);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    width: 0;
+    transition: width 0.4s ease;
+    border-radius: 9999px;
+  }
+  #progressText {
+    min-width: 80px;
+    font-weight: 700;
+    text-align: right;
+    color: var(--accent);
+  }
+  /* Months grid */
+  #monthsGridContainer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+  }
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 18px;
+  }
+  .month {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: var(--shadow);
+    border: 1px dashed var(--border-color);
+  }
+  .month h4 {
+    margin: 0 0 15px 0;
+    color: var(--accent-2);
+    font-size: 18px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .task label {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .task input[type="checkbox"] {
+    margin-top: 4px; /* Align checkbox with text */
+    min-width: 18px;
+    min-height: 18px;
+    accent-color: var(--accent); /* Style checkbox */
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Engineering Roadmap</h1>
+      <div class="plan-controls">
+        <select id="planSelect" title="Select plan duration">
+          <option value="6">6 months</option>
+          <option value="8">8 months</option>
+          <option value="12">12 months</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input id="customMonths" type="number" min="1" placeholder="Custom months" style="display:none;" />
+        <button id="generatePlanBtn">Generate Plan</button>
+        <button id="exportBtn" class="secondary">Export</button>
+        <input type="file" id="importFile" style="display:none" accept="application/json" />
+        <button id="importBtn" class="secondary">Import</button>
+        <button id="copyBtn">Copy Roadmap</button>
+        <!-- Dark Mode Toggle Button removed -->
+      </div>
+    </header>
+
+    <div id="themeGrid" aria-label="Select theme">
+      <!-- theme previews inserted by JS -->
+    </div>
+
+    <nav aria-label="Phase navigation">
+      <a href="#phase1">Phase 1</a>
+      <a href="#phase2">Phase 2</a>
+      <a href="#phase3">Phase 3</a>
+      <a href="#phase4">Phase 4</a>
+      <a href="#phase5">Phase 5</a>
+      <a href="#tips">Tips</a>
+    </nav>
+
+    <main id="roadmapContent" tabindex="-1">
+      <!-- PHASE 1 -->
+      <section id="phase1" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="content1" aria-expanded="true">
+          Phase 1 — Strong Foundations (Pre-requisites) <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="content1">
+          <div class="goal">Goal: Learn the core concepts first, then practice using tools.</div>
+          <div class="section-title">Concepts (what to learn)</div>
+          <ul>
+            <li>Programming fundamentals: syntax, control flow, functions, OOP, scripting.</li>
+            <li>Mathematics: linear algebra (vectors/matrices), probability & statistics, basic calculus.</li>
+            <li>Computer Science fundamentals: algorithms, data structures, time/space complexity.</li>
+          </ul>
+          <div class="section-title">Tools & resources (how to practice / references)</div>
+          <ul>
+            <li><span class="keyword">Python — courses & practice:</span>
+              <ul>
+                <li><a href="https://www.youtube.com/watch?v=rfscVS0vtbw" target="_blank" rel="noopener noreferrer" class="resource">Python Crash Course — freeCodeCamp (video)</a> OR <a href="https://cs50.harvard.edu/python/" target="_blank" rel="noopener noreferrer" class="resource">CS50: Intro to Programming (Python)</a></li>
+                <li><a href="https://realpython.com/" target="_blank" rel="noopener noreferrer" class="resource">Real Python</a></li>
+                <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener noreferrer" class="resource">Automate the Boring Stuff with Python</a></li>
+                <li><a href="https://leetcode.com/problemset/all/?difficulty=EASY" target="_blank" rel="noopener noreferrer" class="resource">Practice: LeetCode — Easy problems</a></li>
+              </ul>
+            </li>
+            <li><span class="keyword">Math:</span>
+              <ul>
+                <li><a href="https://www.khanacademy.org/math/linear-algebra" target="_blank" rel="noopener noreferrer" class="resource">Khan Academy — Linear Algebra</a></li>
+                <li><a href="https://www.khanacademy.org/math/statistics-probability" target="_blank" rel="noopener noreferrer" class="resource">Khan Academy — Statistics & Probability</a></li>
+                <li><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" target="_blank" rel="noopener noreferrer" class="resource">3Blue1Brown — Essence of Linear Algebra (playlist)</a></li>
+              </ul>
+            </li>
+            <li><span class="keyword">CS fundamentals:</span>
+              <ul>
+                <li><a href="https://cs50.harvard.edu/x/" target="_blank" rel="noopener noreferrer" class="resource">CS50 — Intro to Computer Science</a></li>
+                <li><a href="https://neetcode.io/" target="_blank" rel="noopener noreferrer" class="resource">NeetCode</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="checkpoint">Checkpoint: Implement small scripts, solve ~30 LeetCode Easy problems, and code basic NumPy linear algebra operations.</div>
+        </div>
+      </section>
+      <!-- PHASE 2 -->
+      <section id="phase2" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="content2" aria-expanded="true">
+          Phase 2 — AI Basics & ML Fundamentals <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="content2">
+          <div class="goal">Goal: Learn ML theory and basic neural nets, then implement them.</div>
+          <div class="section-title">Concepts (what to learn)</div>
+          <ul>
+            <li>Supervised learning: regression, classification.</li>
+            <li>Unsupervised learning: clustering.</li>
+            <li>Model evaluation: confusion matrix, precision/recall, cross-validation.</li>
+            <li>Neural network basics: neurons, activations, loss, backpropagation, optimizers.</li>
+            <li>Data preprocessing and feature engineering.</li>
+          </ul>
+          <div class="section-title">Tools & resources (how to practice)</div>
+          <ul>
+            <li><span class="keyword">Core ML courses (choose one as a bridge from Python → ML):</span>
+              <ul>
+                <li><a href="https://www.youtube.com/watch?v=7eh4d6sabA0" target="_blank" rel="noopener noreferrer" class="resource">Machine Learning with Python — freeCodeCamp (video)</a> OR <a href="https://www.deeplearning.ai/short-courses/ai-python-for-beginners/" target="_blank" rel="noopener noreferrer" class="resource">AI Python for Beginners — DeepLearning.AI (Andrew Ng)</a></li>
+              </ul>
+            </li>
+            <li><span class="keyword">scikit-learn documentation:</span> <a href="https://scikit-learn.org/stable/" target="_blank" rel="noopener noreferrer" class="resource">scikit-learn</a></li>
+            <li><span class="keyword">Deep Learning — concepts first, implementation second (choose one concept course):</span>
+              <ul>
+                <li><a href="https://www.coursera.org/specializations/deep-learning" target="_blank" rel="noopener noreferrer" class="resource">Deep Learning Specialization — Andrew Ng (Coursera)</a> OR <a href="https://karpathy.ai/zero-to-hero.html" target="_blank" rel="noopener noreferrer" class="resource">Neural Networks: Zero to Hero — Andrej Karpathy (video series)</a></li>
+              </ul>
+            </li>
+            <li><span class="keyword">Implementation:</span> <a href="https://pytorch.org/tutorials/" target="_blank" rel="noopener noreferrer" class="resource">PyTorch Tutorials</a></li>
+            <li><span class="keyword">Data handling:</span>
+              <ul>
+                <li><a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/10_min.html" target="_blank" rel="noopener noreferrer" class="resource">Pandas — 10 Minute Guide</a></li>
+                <li><a href="https://www.kaggle.com/learn/data-cleaning" target="_blank" rel="noopener noreferrer" class="resource">Kaggle — Data Cleaning with Python</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="checkpoint">Checkpoint: Train and evaluate models on small datasets (Iris, MNIST), experiment with simple neural nets.</div>
+        </div>
+      </section>
+      <!-- PHASE 3 -->
+      <section id="phase3" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="content3" aria-expanded="true">
+          Phase 3 — Intermediate AI Engineering <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="content3">
+          <div class="goal">Goal: Learn and implement medium complexity AI systems and pipelines.</div>
+          <div class="section-title">Concepts</div>
+          <ul>
+            <li>Deep neural networks: CNNs, RNNs, transformers.</li>
+            <li>Transfer learning and fine-tuning.</li>
+            <li>Data pipelines and feature stores.</li>
+            <li>Model deployment basics.</li>
+            <li>Version control and experiment tracking.</li>
+          </ul>
+          <div class="section-title">Tools & resources</div>
+          <ul>
+            <li><a href="https://www.fast.ai/" target="_blank" rel="noopener noreferrer" class="resource">fast.ai courses</a></li>
+            <li><a href="https://huggingface.co/course/chapter1" target="_blank" rel="noopener noreferrer" class="resource">HuggingFace Transformers Course</a></li>
+            <li><a href="https://mlflow.org/docs/latest/tutorials-and-examples/tutorial.html" target="_blank" rel="noopener noreferrer" class="resource">MLflow tutorial</a></li>
+            <li><a href="https://www.dvc.org/doc/start" target="_blank" rel="noopener noreferrer" class="resource">DVC: Data version control</a></li>
+            <li><a href="https://www.kubeflow.org/docs/" target="_blank" rel="noopener noreferrer" class="resource">Kubeflow docs</a></li>
+          </ul>
+          <div class="checkpoint">Checkpoint: Build a small project with transfer learning, track experiments, and deploy a model API.</div>
+        </div>
+      </section>
+      <!-- PHASE 4 -->
+      <section id="phase4" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="content4" aria-expanded="true">
+          Phase 4 — Advanced AI Engineering & MLOps <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="content4">
+          <div class="goal">Goal: Master advanced model deployment, scalable pipelines, and MLOps.</div>
+          <div class="section-title">Concepts</div>
+          <ul>
+            <li>Scalable data pipelines (Apache Airflow, Kafka).</li>
+            <li>Model serving and monitoring.</li>
+            <li>CI/CD for ML models.</li>
+            <li>Infrastructure as Code (Terraform, Kubernetes).</li>
+            <li>Security and privacy for ML systems.</li>
+          </ul>
+          <div class="section-title">Tools & resources</div>
+          <ul>
+            <li><a href="https://airflow.apache.org/docs/" target="_blank" rel="noopener noreferrer" class="resource">Apache Airflow docs</a></li>
+            <li><a href="https://kafka.apache.org/documentation/" target="_blank" rel="noopener noreferrer" class="resource">Apache Kafka docs</a></li>
+            <li><a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener noreferrer" class="resource">Kubernetes docs</a></li>
+            <li><a href="https://www.terraform.io/docs/index.html" target="_blank" rel="noopener noreferrer" class="resource">Terraform docs</a></li>
+            <li><a href="https://mlflow.org/docs/latest/" target="_blank" rel="noopener noreferrer" class="resource">MLflow docs</a></li>
+          </ul>
+          <div class="checkpoint">Checkpoint: Create a full pipeline with CI/CD and automated monitoring of deployed models.</div>
+        </div>
+      </section>
+      <!-- PHASE 5 -->
+      <section id="phase5" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="content5" aria-expanded="true">
+          Phase 5 — Specialized Topics & Continuous Learning <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="content5">
+          <div class="goal">Goal: Stay updated, deepen expertise, and contribute to AI engineering community.</div>
+          <div class="section-title">Concepts & areas</div>
+          <ul>
+            <li>Ethics & AI fairness.</li>
+            <li>Explainability and interpretability.</li>
+            <li>Edge AI and TinyML.</li>
+            <li>Research papers & reading groups.</li>
+            <li>Community & open source contributions.</li>
+          </ul>
+          <div class="section-title">Resources</div>
+          <ul>
+            <li><a href="https://www.partnershiponai.org/" target="_blank" rel="noopener noreferrer" class="resource">Partnership on AI</a></li>
+            <li><a href="https://arxiv.org/list/cs.AI/recent" target="_blank" rel="noopener noreferrer" class="resource">arXiv AI papers</a></li>
+            <li><a href="https://paperswithcode.com/" target="_blank" rel="noopener noreferrer" class="resource">Papers with Code</a></li>
+            <li><a href="https://www.tinyml.org/" target="_blank" rel="noopener noreferrer" class="resource">TinyML Foundation</a></li>
+          </ul>
+          <div class="checkpoint">Checkpoint: Regularly read papers, attend meetups/conferences, and contribute to projects.</div>
+        </div>
+      </section>
+
+      <section id="tips" class="phase" aria-expanded="true">
+        <h2 tabindex="0" role="button" aria-controls="contentTips" aria-expanded="true">
+          Tips for Success <span class="caret">▼</span>
+        </h2>
+        <div class="content" id="contentTips">
+          <ul>
+            <li>Consistent practice is key — code daily or weekly.</li>
+            <li>Build real projects to solidify concepts.</li>
+            <li>Join communities and collaborate with peers.</li>
+            <li>Keep a learning journal or blog.</li>
+            <li>Don’t hesitate to ask for help or mentorship.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <div id="monthsGridContainer">
+      <!-- Monthly plan will be rendered here -->
+    </div>
+
+  </div>
+
+<script>
+(() => {
+  // Helper to convert hex to RGB for rgba() usage
+  function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r}, ${g}, ${b}`;
+  }
+
+  // Define themes with CSS variable sets
+  const themes = [
+    {
+      id: 'default-blue',
+      name: 'Default Blue (Light)',
+      lightVars: {
+        '--bg': '#f8f9fa',
+        '--card': '#ffffff',
+        '--text': '#212529',
+        '--accent': '#007bff',
+        '--accent-2': '#6c757d',
+        '--link': '#17a2b8',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {} // Not used for a toggle, but for consistency
+    },
+    {
+      id: 'vibrant-pink',
+      name: 'Vibrant Pink (Light)',
+      lightVars: {
+        '--bg': '#fdf2f8',
+        '--card': '#ffffff',
+        '--text': '#3a0ca3',
+        '--accent': '#e83e8c',
+        '--accent-2': '#fd7e14',
+        '--link': '#dc3545',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'forest-green',
+      name: 'Forest Green (Light)',
+      lightVars: {
+        '--bg': '#f0fdf4',
+        '--card': '#ffffff',
+        '--text': '#1e4d2b',
+        '--accent': '#28a745',
+        '--accent-2': '#6f42c1',
+        '--link': '#20c997',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'golden-hour',
+      name: 'Golden Hour (Light)',
+      lightVars: {
+        '--bg': '#fffaf0',
+        '--card': '#ffffff',
+        '--text': '#5a3e2b',
+        '--accent': '#ffc107',
+        '--accent-2': '#dc3545',
+        '--link': '#fd7e14',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'ocean-breeze',
+      name: 'Ocean Breeze (Light)',
+      lightVars: {
+        '--bg': '#e0f7fa',
+        '--card': '#ffffff',
+        '--text': '#004d40',
+        '--accent': '#00bcd4',
+        '--accent-2': '#00796b',
+        '--link': '#2196f3',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'lavender-haze',
+      name: 'Lavender Haze (Light)',
+      lightVars: {
+        '--bg': '#f5f0ff',
+        '--card': '#ffffff',
+        '--text': '#4a148c',
+        '--accent': '#9c27b0',
+        '--accent-2': '#673ab7',
+        '--link': '#7b1fa2',
+        '--muted': '#6c757d',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.08)',
+        '--border-color': 'rgba(0, 0, 0, 0.1)',
+      },
+      darkVars: {}
+    },
+    // --- New Dark-Based Themes ---
+    {
+      id: 'midnight-code',
+      name: 'Midnight Code (Dark)',
+      lightVars: { // These are the primary vars for this dark theme
+        '--bg': '#1a1a2e',
+        '--card': '#2a2a4a',
+        '--text': '#e0e0e0',
+        '--accent': '#00bcd4', /* Cyan */
+        '--accent-2': '#8e44ad', /* Amethyst */
+        '--link': '#20c997', /* Teal */
+        '--muted': '#a0a0a0',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.4)',
+        '--border-color': 'rgba(255, 255, 255, 0.15)',
+      },
+      darkVars: {} // Not used for toggle, but for consistency
+    },
+    {
+      id: 'deep-ocean',
+      name: 'Deep Ocean (Dark)',
+      lightVars: {
+        '--bg': '#0a192f',
+        '--card': '#172a45',
+        '--text': '#a8b2d1',
+        '--accent': '#64ffda', /* Bright Aqua */
+        '--accent-2': '#8892b0', /* Light Slate */
+        '--link': '#5bc0de', /* Sky Blue */
+        '--muted': '#8892b0',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.4)',
+        '--border-color': 'rgba(255, 255, 255, 0.15)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'dark-forest',
+      name: 'Dark Forest (Dark)',
+      lightVars: {
+        '--bg': '#212b2b',
+        '--card': '#2f3d3d',
+        '--text': '#c0d0c0',
+        '--accent': '#4CAF50', /* Green */
+        '--accent-2': '#8BC34A', /* Light Green */
+        '--link': '#009688', /* Dark Cyan */
+        '--muted': '#90a090',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.4)',
+        '--border-color': 'rgba(255, 255, 255, 0.15)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'volcano',
+      name: 'Volcano (Dark)',
+      lightVars: {
+        '--bg': '#2c0f0f',
+        '--card': '#3d1a1a',
+        '--text': '#f0d0d0',
+        '--accent': '#FF5722', /* Deep Orange */
+        '--accent-2': '#FF9800', /* Orange */
+        '--link': '#F44336', /* Red */
+        '--muted': '#d0a0a0',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.4)',
+        '--border-color': 'rgba(255, 255, 255, 0.15)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'royal-purple',
+      name: 'Royal Purple (Dark)',
+      lightVars: {
+        '--bg': '#2a1a3a',
+        '--card': '#3b2b4b',
+        '--text': '#e0c0f0',
+        '--accent': '#9C27B0', /* Purple */
+        '--accent-2': '#673AB7', /* Deep Purple */
+        '--link': '#7B1FA2', /* Darker Purple */
+        '--muted': '#c0a0d0',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.4)',
+        '--border-color': 'rgba(255, 255, 255, 0.15)',
+      },
+      darkVars: {}
+    },
+    {
+      id: 'cyber-neon',
+      name: 'Cyber Neon (Dark)',
+      lightVars: {
+        '--bg': '#0d0d0d',
+        '--card': '#1a1a1a',
+        '--text': '#00ff00', /* Bright Green */
+        '--accent': '#00ffff', /* Aqua */
+        '--accent-2': '#ff00ff', /* Magenta */
+        '--link': '#ffff00', /* Yellow */
+        '--muted': '#808080',
+        '--shadow': '0 0.5rem 1rem rgba(0, 0, 0, 0.6)',
+        '--border-color': 'rgba(0, 255, 255, 0.2)',
+      },
+      darkVars: {}
+    }
+  ];
+
+  // Elements
+  const themeGrid = document.getElementById('themeGrid');
+  const planSelect = document.getElementById('planSelect');
+  const customMonthsInput = document.getElementById('customMonths');
+  const generatePlanBtn = document.getElementById('generatePlanBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const importFile = document.getElementById('importFile');
+  const copyBtn = document.getElementById('copyBtn');
+  // const darkModeToggle = document.getElementById('darkModeToggle'); // Removed
+  const body = document.body; // Still needed for general body class/style manipulation if any
+  // const sunIcon = document.querySelector('.sun-icon'); // Removed
+  // const moonIcon = document.querySelector('.moon-icon'); // Removed
+  const monthsGridContainer = document.getElementById('monthsGridContainer');
+
+  // State keys in localStorage
+  const STORAGE_THEME = 'roadmapSelectedTheme';
+  const STORAGE_PROGRESS = 'roadmapProgress';
+  const STORAGE_PLAN = 'roadmapPlan';
+  // const STORAGE_DARK_MODE = 'roadmapDarkMode'; // Removed
+  const STORAGE_MONTHLY_PLAN = 'roadmapMonthlyPlan';
+
+  let currentThemeId = 'default-blue'; // Default theme
+  // let isDarkMode = false; // Removed
+  let allRoadmapTasks = []; // Array to hold all tasks with their original text and unique IDs
+  let monthlyPlan = []; // Array to hold the generated monthly plan structure
+
+  // Apply theme variables to :root
+  function applyThemeVars(vars) {
+    Object.entries(vars).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+      // Also set RGB variables for rgba() usage in CSS
+      if (key === '--accent' || key === '--accent-2' || key === '--link') {
+        document.documentElement.style.setProperty(`${key}-rgb`, hexToRgb(val));
+      }
+    });
+  }
+
+  // Select and apply theme by id
+  function selectTheme(id) {
+    const theme = themes.find(t => t.id === id);
+    if (!theme) return;
+
+    currentThemeId = id;
+    // Always apply lightVars as there's no dark mode toggle
+    const varsToApply = theme.lightVars; 
+    
+    applyThemeVars(varsToApply);
+
+    localStorage.setItem(STORAGE_THEME, id);
+
+    // Update selected class in grid
+    document.querySelectorAll('.theme-preview').forEach(div => {
+      div.classList.toggle('selected', div.dataset.themeId === id);
+    });
+  }
+
+  // toggleDarkMode function removed
+
+  // Build theme previews
+  function buildThemePreviews() {
+    themeGrid.innerHTML = ''; // Clear existing previews
+    themes.forEach(theme => {
+      const div = document.createElement('div');
+      div.classList.add('theme-preview');
+      div.setAttribute('tabindex', 0);
+      div.setAttribute('role', 'button');
+      div.setAttribute('aria-label', `Select theme ${theme.name}`);
+      div.dataset.themeId = theme.id;
+
+      const swatch = document.createElement('div');
+      swatch.className = 'theme-swatch';
+      // Use the theme's primary colors (from lightVars, which now holds the main theme colors) for swatch preview
+      swatch.style.background = `linear-gradient(135deg, ${theme.lightVars['--accent-2']}, ${theme.lightVars['--accent']})`;
+      div.appendChild(swatch);
+
+      const nameLabel = document.createElement('div');
+      nameLabel.className = 'theme-name';
+      nameLabel.textContent = theme.name;
+      div.appendChild(nameLabel);
+
+      div.addEventListener('click', () => selectTheme(theme.id));
+      div.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectTheme(e.currentTarget.dataset.themeId);
+        }
+      });
+
+      themeGrid.appendChild(div);
+    });
+  }
+
+  // Load saved theme preference (dark mode preference removed)
+  function loadPreferences() {
+    // isDarkMode and body.classList.toggle('dark-mode', isDarkMode) removed
+    // SVG icon visibility logic removed
+
+    const savedThemeId = localStorage.getItem(STORAGE_THEME);
+    if (savedThemeId && themes.find(t => t.id === savedThemeId)) {
+      selectTheme(savedThemeId);
+    } else {
+      selectTheme('default-blue'); // Fallback to default light theme
+    }
+  }
+
+  // Expand/collapse phase sections on header click
+  function setupPhaseToggle() {
+    document.querySelectorAll('section.phase > h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.parentElement;
+        const content = header.nextElementSibling;
+        const expanded = section.getAttribute('aria-expanded') === 'true';
+        section.setAttribute('aria-expanded', !expanded);
+        header.setAttribute('aria-expanded', !expanded);
+        if (!expanded) {
+          content.style.display = 'block';
+          header.querySelector('.caret').textContent = '▼';
+        } else {
+          content.style.display = 'none';
+          header.querySelector('.caret').textContent = '▶';
+        }
+      });
+    });
+  }
+
+  // Extract all tasks from the roadmap HTML and store them
+  function extractAllRoadmapTasks() {
+    allRoadmapTasks = [];
+    document.querySelectorAll('.phase .content ul li').forEach((li, index) => {
+      // Get the text content of the li, excluding any existing checkbox label
+      let taskText = li.textContent.trim();
+      const checkboxLabel = li.querySelector('label');
+      if (checkboxLabel) {
+        // If there's a label, get its text content (excluding checkbox itself)
+        taskText = Array.from(checkboxLabel.childNodes)
+                        .filter(node => node.nodeType === Node.TEXT_NODE)
+                        .map(node => node.textContent.trim())
+                        .join(' ');
+      }
+      
+      allRoadmapTasks.push({
+        id: `task-${index}`,
+        text: taskText,
+        originalHtml: li.innerHTML // Store original HTML for rendering
+      });
+    });
+  }
+
+  // Build progress tracking checkboxes dynamically (for main roadmap view)
+  function buildProgressTracking() {
+    // This function is now primarily for the initial setup of checkboxes in the main roadmap view
+    // and will be called once. The monthly plan will render its own checkboxes.
+    document.querySelectorAll('.phase .content ul li').forEach(li => {
+      if (li.querySelector('input[type=checkbox]')) return; // Already processed
+
+      const originalText = li.innerHTML; // Store original content before wrapping
+      const label = document.createElement('label');
+      label.style.userSelect = 'none';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.style.marginRight = '8px';
+      
+      label.appendChild(checkbox);
+      label.innerHTML += originalText; // Append original content to label
+
+      li.innerHTML = ''; // Clear original li content
+      li.appendChild(label);
+    });
+  }
+
+  // Generate unique keys for checkboxes and save/load progress
+  function assignCheckboxIdsAndLoadProgress() {
+    // This function now handles checkboxes in both the main roadmap and the monthly plan
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
+    const progress = JSON.parse(localStorage.getItem(STORAGE_PROGRESS) || '{}');
+
+    checkboxes.forEach((cb) => {
+      // Find the corresponding task in allRoadmapTasks based on its text content
+      // This is a fallback if the taskKey isn't already set (e.g., for newly generated monthly plan items)
+      let taskText = cb.parentElement.textContent.trim();
+      let task = allRoadmapTasks.find(t => t.text === taskText);
+      
+      if (task) {
+        cb.dataset.taskKey = task.id;
+      } else {
+        // If task not found in allRoadmapTasks (e.g., if it's a checkpoint or other non-list item)
+        // or if it's a new task added dynamically, assign a generic key.
+        // This part might need refinement for more complex dynamic task additions.
+        if (!cb.dataset.taskKey) {
+            cb.dataset.taskKey = `dynamic-task-${Math.random().toString(36).substr(2, 9)}`;
+        }
+      }
+
+      cb.checked = !!progress[cb.dataset.taskKey];
+      cb.removeEventListener('change', handleCheckboxChange); // Prevent duplicate listeners
+      cb.addEventListener('change', handleCheckboxChange);
+    });
+  }
+
+  function handleCheckboxChange(event) {
+    const cb = event.target;
+    const progress = JSON.parse(localStorage.getItem(STORAGE_PROGRESS) || '{}');
+    progress[cb.dataset.taskKey] = cb.checked;
+    localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progress));
+    updateProgressBar();
+
+    // Also update the state of the corresponding checkbox in the other view (main roadmap or monthly plan)
+    document.querySelectorAll(`input[type=checkbox][data-task-key="${cb.dataset.taskKey}"]`).forEach(otherCb => {
+        if (otherCb !== cb) { // Don't update the one that just changed
+            otherCb.checked = cb.checked;
+        }
+    });
+  }
+
+  // Update progress bar and text
+  function updateProgressBar() {
+    const checkboxes = document.querySelectorAll('input[type=checkbox][data-task-key]'); // Select all checkboxes with a task-key
+    const total = checkboxes.length;
+    if (total === 0) {
+        // If no tasks, hide progress bar or show 0%
+        let barWrap = document.querySelector('.progress-wrap');
+        if (barWrap) barWrap.style.display = 'none';
+        return;
+    } else {
+        let barWrap = document.querySelector('.progress-wrap');
+        if (barWrap) barWrap.style.display = 'flex'; // Ensure visible if tasks exist
+    }
+
+    const checked = [...checkboxes].filter(cb => cb.checked).length;
+    const percent = Math.round((checked / total) * 100);
+
+    let bar = document.getElementById('progressFill');
+    let text = document.getElementById('progressText');
+    if (!bar) {
+      const wrap = document.querySelector('.wrap');
+      const div = document.createElement('div');
+      div.className = 'progress-wrap';
+      div.innerHTML = `
+        <div>Progress:</div>
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <div id="progressText">0%</div>
+      `;
+      wrap.insertBefore(div, wrap.querySelector('main'));
+      bar = document.getElementById('progressFill');
+      text = document.getElementById('progressText');
+    }
+    bar.style.width = percent + '%';
+    text.textContent = percent + '% completed';
+  }
+
+  // Handle plan selection and custom input show/hide
+  planSelect.addEventListener('change', () => {
+    if (planSelect.value === 'custom') {
+      customMonthsInput.style.display = 'inline-block';
+      customMonthsInput.focus();
+    } else {
+      customMonthsInput.style.display = 'none';
+    }
+  });
+
+  // Generate monthly plan
+  function generateMonthlyPlan() {
+    const planDuration = planSelect.value === 'custom' ? Number(customMonthsInput.value) : Number(planSelect.value);
+    if (!planDuration || planDuration < 1) {
+      alert('Please enter a valid number of months for the plan.');
+      return;
+    }
+
+    if (allRoadmapTasks.length === 0) {
+        alert('No tasks found in the roadmap to generate a plan. Please ensure tasks are defined in the HTML.');
+        return;
+    }
+
+    monthlyPlan = [];
+    const tasksPerMonth = Math.ceil(allRoadmapTasks.length / planDuration);
+    let taskIndex = 0;
+
+    for (let i = 0; i < planDuration; i++) {
+      const monthTasks = [];
+      for (let j = 0; j < tasksPerMonth; j++) {
+        if (taskIndex < allRoadmapTasks.length) {
+          monthTasks.push(allRoadmapTasks[taskIndex]);
+          taskIndex++;
+        } else {
+          break;
+        }
+      }
+      monthlyPlan.push({ month: i + 1, tasks: monthTasks });
+    }
+
+    localStorage.setItem(STORAGE_PLAN, planDuration);
+    localStorage.setItem(STORAGE_MONTHLY_PLAN, JSON.stringify(monthlyPlan));
+    renderMonthlyPlan();
+    assignCheckboxIdsAndLoadProgress(); // Re-assign and load progress for new checkboxes
+    updateProgressBar();
+    alert(`Roadmap plan generated for ${planDuration} months.`);
+  }
+
+  // Render the monthly plan grid
+  function renderMonthlyPlan() {
+    monthsGridContainer.innerHTML = ''; // Clear previous grid
+    if (monthlyPlan.length === 0) {
+        monthsGridContainer.style.display = 'none';
+        return;
+    }
+
+    monthsGridContainer.style.display = 'block';
+    const grid = document.createElement('div');
+    grid.className = 'months-grid';
+
+    monthlyPlan.forEach(monthData => {
+      const monthDiv = document.createElement('div');
+      monthDiv.className = 'month';
+      monthDiv.innerHTML = `<h4>Month ${monthData.month}</h4>`;
+      
+      const ul = document.createElement('ul');
+      monthData.tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'task'; // Apply task styling
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.taskKey = task.id; // Link to original task ID
+        
+        label.appendChild(checkbox);
+        label.innerHTML += task.text; // Use plain text for simplicity in monthly view
+
+        li.appendChild(label);
+        ul.appendChild(li);
+      });
+      monthDiv.appendChild(ul);
+      grid.appendChild(monthDiv);
+    });
+    monthsGridContainer.appendChild(grid);
+  }
+
+  // Load saved monthly plan
+  function loadMonthlyPlan() {
+    const savedMonthlyPlan = localStorage.getItem(STORAGE_MONTHLY_PLAN);
+    if (savedMonthlyPlan) {
+      monthlyPlan = JSON.parse(savedMonthlyPlan);
+      renderMonthlyPlan();
+    } else {
+      monthsGridContainer.style.display = 'none'; // Hide if no plan saved
+    }
+  }
+
+  // Export roadmap progress and theme
+  function exportRoadmap() {
+    const progress = localStorage.getItem(STORAGE_PROGRESS) || '{}';
+    const theme = localStorage.getItem(STORAGE_THEME) || '';
+    const plan = localStorage.getItem(STORAGE_PLAN) || '';
+    // const darkMode = localStorage.getItem(STORAGE_DARK_MODE) || 'false'; // Removed
+    const monthlyPlanData = localStorage.getItem(STORAGE_MONTHLY_PLAN) || '[]';
+
+    const exportData = {
+      progress: JSON.parse(progress),
+      theme,
+      plan,
+      // darkMode: JSON.parse(darkMode), // Removed
+      monthlyPlan: JSON.parse(monthlyPlanData) // Include monthly plan
+    };
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ai_engineering_roadmap_export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Import roadmap progress and theme
+  function importRoadmap(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.progress) {
+          localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(data.progress));
+        }
+        if (data.theme) {
+          currentThemeId = data.theme; 
+        }
+        if (data.plan) {
+          localStorage.setItem(STORAGE_PLAN, data.plan);
+          // Update plan select dropdown
+          if (['6', '8', '12'].includes(data.plan.toString())) {
+            planSelect.value = data.plan;
+            customMonthsInput.style.display = 'none';
+          } else {
+            planSelect.value = 'custom';
+            customMonthsInput.style.display = 'inline-block';
+            customMonthsInput.value = data.plan;
+          }
+        }
+        // if (typeof data.darkMode === 'boolean') { // Removed
+        //   localStorage.setItem(STORAGE_DARK_MODE, data.darkMode);
+        // }
+        if (data.monthlyPlan) { // Import monthly plan
+          localStorage.setItem(STORAGE_MONTHLY_PLAN, JSON.stringify(data.monthlyPlan));
+        }
+        
+        loadPreferences(); // Re-apply theme (no dark mode)
+        loadMonthlyPlan(); // Load and render imported monthly plan
+        assignCheckboxIdsAndLoadProgress(); // Re-assign and load progress for all checkboxes
+        updateProgressBar();
+        alert('Roadmap imported successfully.');
+      } catch (err) {
+        alert('Invalid import file.');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // Copy roadmap content as text
+  function copyRoadmapText() {
+    const roadmapMain = document.getElementById('roadmapContent');
+    const text = roadmapMain.innerText || roadmapMain.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Roadmap text copied to clipboard!');
+    }, () => {
+      alert('Failed to copy roadmap text.');
+    });
+  }
+
+  // Init function on load
+  function init() {
+    loadPreferences(); // Load theme (no dark mode)
+    buildThemePreviews(); // Build previews after theme is loaded to ensure correct selection
+    setupPhaseToggle();
+    extractAllRoadmapTasks(); // Extract tasks before building checkboxes
+    buildProgressTracking(); // Build checkboxes in main roadmap
+    loadMonthlyPlan(); // Load and render monthly plan if saved
+    assignCheckboxIdsAndLoadProgress(); // Assign IDs and load progress for ALL checkboxes (main and monthly)
+    updateProgressBar();
+
+    // Restore plan select if saved
+    const savedPlan = localStorage.getItem(STORAGE_PLAN);
+    if (savedPlan) {
+      if (['6', '8', '12'].includes(savedPlan)) {
+        planSelect.value = savedPlan;
+        customMonthsInput.style.display = 'none';
+      } else if (!isNaN(savedPlan)) {
+        planSelect.value = 'custom';
+        customMonthsInput.style.display = 'inline-block';
+        customMonthsInput.value = savedPlan;
+      }
+    }
+
+    // Event Listeners
+    generatePlanBtn.addEventListener('click', generateMonthlyPlan); // Changed to generateMonthlyPlan
+    exportBtn.addEventListener('click', exportRoadmap);
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', e => {
+      if (e.target.files.length > 0) {
+        importRoadmap(e.target.files[0]);
+        e.target.value = '';
+      }
+    });
+    copyBtn.addEventListener('click', copyRoadmapText);
+    // darkModeToggle.addEventListener('click', toggleDarkMode); // Removed
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>
